@@ -20,6 +20,8 @@
 @property (nonatomic, strong) UIButton *switchCameraButton;
 @property (nonatomic, strong) ConfirmViewController *confirmController;
 
+@property (nonatomic, assign) BOOL isRecordingVideo;
+
 @end
 
 @implementation ExampleViewController
@@ -30,6 +32,7 @@
         
         self.title = @"Example Camera";
         self.tabBarItem.image = [UIImage imageNamed:@"TakePhoto"];
+        self.isRecordingVideo = false;
     }
     
     return self;
@@ -134,7 +137,14 @@
 {
     NSLog(@"take photo button pressed");
     
-    [self.fastCamera takePicture];
+    if (self.isRecordingVideo == false) {
+        [self.fastCamera startRecordingVideo];
+        self.isRecordingVideo = true;
+    }
+    else {
+        [self.fastCamera stopRecordingVideo];
+        self.isRecordingVideo = false;
+    }
 }
 
 - (void)flashButtonPressed
@@ -257,6 +267,15 @@
     
     self.confirmController.imagesReady = YES;
 }
+
+- (void)cameraController:(id<FastttCameraInterface>)cameraController didFinishRecordingVideo:(NSURL *)videoURL {
+    NSLog(@"Video recorded at '%@'.", videoURL.absoluteString);
+}
+
+- (void)cameraController:(id<FastttCameraInterface>)cameraController didFinishNormalizedCapturedVideo:(NSURL *)videoURL {
+    NSLog(@"Video normalized - available at '%@'.", videoURL.absoluteString);
+}
+
 
 #pragma mark - ConfirmControllerDelegate
 
